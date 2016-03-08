@@ -23,9 +23,8 @@ public class Controller {
     private static final Log log = LogFactory.getLog(Controller.class);
 
     @RequestMapping("/hello")
-    public Message message(@RequestParam(value="name", defaultValue="Yann") String name) {
-        Message msg = new Message(name, "Hello " + name);
-        return msg;
+    public String hello(@RequestParam(value="name", defaultValue="Yann") String name) {
+        return "Hello " + name;
     }
 
     @RequestMapping("/tables")

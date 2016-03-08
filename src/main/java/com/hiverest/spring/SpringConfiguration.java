@@ -26,7 +26,6 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 @EnableWebMvc
 @ComponentScan(basePackages = "com.hiverest.spring")
 @PropertySources({
-        @PropertySource("classpath:log4j.properties"),
         @PropertySource("classpath:app.properties")
 })
 public class SpringConfiguration {

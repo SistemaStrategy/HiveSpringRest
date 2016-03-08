@@ -20,3 +20,7 @@ file for increasing the war upload limit size of 50 MB.
 
 ## Configuration
 The HiveServer2 URL can be configured by editing the src/main/resources/app.properties file.
+
+## Logging
+By default the application is writing to {catalina_home}/logs/HiveSpringRest.log, but this output path can be modified 
+by editing the src/main/resources/log4j.properties file.
