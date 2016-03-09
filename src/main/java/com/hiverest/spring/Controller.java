@@ -1,24 +1,26 @@
 package com.hiverest.spring;
 
 /**
- * Created by root on 3/2/16.
+ * Created by yann blanc on 3/2/16.
  */
+import com.hiverest.spring.dao.ClientDAO;
+import com.hiverest.spring.data.Client;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.hadoop.hive.HiveClient;
-import org.springframework.data.hadoop.hive.HiveTemplate;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
 public class Controller {
 
     @Autowired
-    private HiveClient hiveTemplate;
+    private ClientDAO clientDAO;
 
     private static final Log log = LogFactory.getLog(Controller.class);
 
@@ -27,13 +29,25 @@ public class Controller {
         return "Hello " + name;
     }
 
-    @RequestMapping("/tables")
-    public List<String> getTables() {
-        List<String> tables;
+    /*Change return type, make it generic*/
+    @RequestMapping("/getAll/{tableName}")
+    public List<String> getAll(@PathVariable String tableName) {
+
         log.info("/tables");
-        tables = hiveTemplate.execute("show tables");
+
+        List<String> result = new ArrayList<String>();
+
+        if (tableName.compareTo("client") == 0) {
+            List<Client> clients = clientDAO.listClients();
+            for(Client c : clients ) {
+                result.add(c.toString());
+            }
+        } else {
+            result.add("Table " + tableName + " not existing ... ");
+        }
+
         log.info("/tables completed");
-        return tables;
+        return result;
     }
 
 }

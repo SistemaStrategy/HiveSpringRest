@@ -1,37 +1,43 @@
 package com.hiverest.spring;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import com.hiverest.spring.dao.ClientDAO;
+import com.hiverest.spring.dao.ClientDAOImpl;
+import com.hiverest.spring.util.DatabaseCreator;
 import org.apache.hive.jdbc.HiveDriver;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.*;
-import org.springframework.context.support.AbstractApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
-import org.springframework.data.hadoop.hive.HiveClient;
-import org.springframework.data.hadoop.hive.HiveClientFactory;
-import org.springframework.data.hadoop.hive.HiveClientFactoryBean;
-import org.springframework.data.hadoop.hive.HiveTemplate;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.SimpleDriverDataSource;
 
 import javax.sql.DataSource;
 
 /**
- * Created by root on 3/2/16.
+ * Created by yann blanc on 3/2/16.
 */
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 @Configuration
 @EnableWebMvc
 @ComponentScan(basePackages = "com.hiverest.spring")
-@PropertySources({
-        @PropertySource("classpath:app.properties")
-})
+@PropertySource("classpath:app.properties")
 public class SpringConfiguration {
 
-    @Value("${app.hiveUrl}")
+    @Value("${app.hive.url}")
     private String hiveUrl;
+
+    @Value("${app.hive.schema}")
+    private String hiveSchema;
+
+    @Value("${app.hive.auth}")
+    private String hiveAuth;
+
+    @Value("${app.hive.user}")
+    private String hiveUser;
+
+    @Value("${app.hive.password}")
+    private String hivePassword;
 
     @Bean
     public static PropertySourcesPlaceholderConfigurer propertySourcesPlaceholderConfigurer() {
@@ -40,20 +46,27 @@ public class SpringConfiguration {
 
     @Bean
     DataSource hiveDataSource() {
-        return new SimpleDriverDataSource(new HiveDriver(), hiveUrl);
+        String connUrl = hiveUrl + "/" + hiveSchema;
+        /*Add auth parameter if authentication mode is noSasl for HiveServer2*/
+        if (hiveAuth.compareTo("noSasl") == 0) {
+            connUrl = connUrl + ";auth=noSasl";
+        }
+        return new SimpleDriverDataSource(new HiveDriver(), connUrl, hiveUser, hivePassword);
     }
 
     @Bean
-    HiveClientFactory hiveClientFactory(@Qualifier("hiveDataSource") DataSource hiveDataSource) throws Exception {
-        HiveClientFactoryBean hiveClientFactoryBean = new HiveClientFactoryBean();
-        hiveClientFactoryBean.setHiveDataSource(hiveDataSource);
-        hiveClientFactoryBean.afterPropertiesSet();
-        return hiveClientFactoryBean.getObject();
+    JdbcTemplate jdbcTemplate(@Qualifier("hiveDataSource") DataSource hiveDataSource) throws Exception {
+       return new JdbcTemplate(hiveDataSource);
     }
 
     @Bean
-    HiveClient hiveClient(@Qualifier("hiveClientFactory") HiveClientFactory hiveClientFactory){
-        return hiveClientFactory.getHiveClient();
+    ClientDAO clientDAO() {
+        return new ClientDAOImpl();
+    }
+
+    @Bean
+    DatabaseCreator databaseCreator() {
+        return new DatabaseCreator();
     }
 
 }

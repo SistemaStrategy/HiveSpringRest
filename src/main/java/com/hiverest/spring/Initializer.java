@@ -1,7 +1,7 @@
 package com.hiverest.spring;
 
 /**
- * Created by root on 3/2/16.
+ * Created by yann blanc on 3/2/16.
  */
 import org.springframework.web.servlet.support.AbstractAnnotationConfigDispatcherServletInitializer;
 

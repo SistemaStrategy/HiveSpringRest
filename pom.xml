@@ -64,10 +64,16 @@
             <version>2.5.3</version>
         </dependency>
 
-        <dependency>
+        <!--<dependency>
             <groupId>org.springframework.data</groupId>
             <artifactId>spring-data-hadoop</artifactId>
             <version>2.3.0.RELEASE</version>
+        </dependency>-->
+
+        <dependency>
+            <groupId>org.apache.hadoop</groupId>
+            <artifactId>hadoop-client</artifactId>
+            <version>2.6.0</version>
         </dependency>
 
         <dependency>
@@ -81,6 +87,7 @@
                 </exclusion>
             </exclusions>
         </dependency>
+
 
     </dependencies>
 
