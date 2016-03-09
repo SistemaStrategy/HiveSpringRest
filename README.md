@@ -21,6 +21,7 @@ file for increasing the war upload limit size of 50 MB.
 
 ## Configuration
 **TODO : Externalize properties file**
+
 The HiveServer2 settings can be configured by editing the *src/main/resources/app.properties* file. By default the nosasl 
 authentication mode is used and the table creation is enabled. You're free to modify this according your HiveServer2 
 configuration and need. 
@@ -30,6 +31,7 @@ configuration and need.
 * app.hive.password : Hive password, optional if noSasl authentication used
 * app.hive.schema : Schema to be used or created
 * app.hive.createDB : Boolean indicating if the database creation is enabled
+
   **WARNING** The database creation is going to insert data and overwrite actual data in tables
 * app.hive.datafile.client.location : Specify the location of csv files, **local** or **hdfs** values supported
 * app.hive.datafile.client.path : Specify the location of *client.csv* file on **local** or **hdfs** filesystem 
