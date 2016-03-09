@@ -18,16 +18,16 @@ public class DatabaseCreator {
     @Autowired
     private JdbcTemplate jdbcTemplateObject;
 
-    @Value("${app.hive.createDB}")
+    @Value("${app.db.createDB}")
     private String createDB;
 
-    @Value("${app.hive.schema}")
+    @Value("${app.db.schema}")
     private String schema;
 
-    @Value("${app.hive.datafile.client.location}")
+    @Value("${app.db.datafile.client.location}")
     private String datafileClientLocation;
 
-    @Value("${app.hive.datafile.client.path}")
+    @Value("${app.db.datafile.client.path}")
     private String datafileClientPath;
 
     @PostConstruct

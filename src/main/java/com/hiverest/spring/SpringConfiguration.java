@@ -3,7 +3,10 @@ package com.hiverest.spring;
 import com.hiverest.spring.dao.ClientDAO;
 import com.hiverest.spring.dao.ClientDAOImpl;
 import com.hiverest.spring.util.DatabaseCreator;
+import org.apache.commons.logging.LogFactory;
 import org.apache.hive.jdbc.HiveDriver;
+import org.apache.log4j.LogManager;
+import org.apache.log4j.PropertyConfigurator;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.*;
@@ -11,6 +14,7 @@ import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.SimpleDriverDataSource;
 
+import javax.annotation.PostConstruct;
 import javax.sql.DataSource;
 
 /**
@@ -18,16 +22,26 @@ import javax.sql.DataSource;
 */
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.util.Properties;
+
 @Configuration
 @EnableWebMvc
 @ComponentScan(basePackages = "com.hiverest.spring")
-@PropertySource("classpath:app.properties")
+@PropertySource("file:${catalina.home}/conf/HiveSpringRest.properties")
 public class SpringConfiguration {
+
+    @Value("${catalina.home}")
+    private String catalinaHome;
 
     @Value("${app.hive.url}")
     private String hiveUrl;
 
-    @Value("${app.hive.schema}")
+    @Value("${app.hive.port}")
+    private String hivePort;
+
+    @Value("${app.db.schema}")
     private String hiveSchema;
 
     @Value("${app.hive.auth}")
@@ -46,7 +60,7 @@ public class SpringConfiguration {
 
     @Bean
     DataSource hiveDataSource() {
-        String connUrl = hiveUrl + "/" + hiveSchema;
+        String connUrl = hiveUrl + ":" + hivePort + "/" + hiveSchema;
         /*Add auth parameter if authentication mode is noSasl for HiveServer2*/
         if (hiveAuth.compareTo("noSasl") == 0) {
             connUrl = connUrl + ";auth=noSasl";
@@ -69,4 +83,11 @@ public class SpringConfiguration {
         return new DatabaseCreator();
     }
 
+    @PostConstruct
+    public void initLog4j() throws IOException {
+        Properties properties = new Properties();
+        properties.load(new FileInputStream(catalinaHome + "/conf/HiveSpringRest.properties"));
+        LogManager.resetConfiguration();
+        PropertyConfigurator.configure(properties);
+    }
 }
