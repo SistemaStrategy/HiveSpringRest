@@ -33,7 +33,16 @@ You're free to modify this according your HiveServer2 configuration and need.
 
   **WARNING** The database creation is going to insert data and overwrite actual data in tables
 * app.db.datafile.client.location : Specify the location of csv files, **local** or **hdfs** values supported
+
+  **Mandatory if createDB is *true*, otherwise not used**
 * app.db.datafile.client.path : Specify the location of *client.csv* file on **local** or **hdfs** filesystem 
+
+   **Mandatory if createDB is *true*, otherwise not used**
+   
+## Database creation
+If you're setting *app.db.createDB* to true, you'll need to copy the *client.csv* file to your **HiveServer2** machine. 
+Once it's done, provide the filesystem (if it's on **hdfs** or on the **local** filesystem) and the path 
+in order to use this file to insert data in the application database. 
 
 ## Logging
 By default the application is writing to *{catalina_home}/logs/HiveSpringRest.log*, but this output path can be modified 
