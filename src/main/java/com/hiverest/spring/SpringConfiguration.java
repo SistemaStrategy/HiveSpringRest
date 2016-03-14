@@ -2,12 +2,11 @@ package com.hiverest.spring;
 
 import com.hiverest.spring.dao.ClientDAO;
 import com.hiverest.spring.dao.ClientDAOImpl;
-import com.hiverest.spring.util.DatabaseCreator;
+import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.hive.jdbc.HiveDriver;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.PropertyConfigurator;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.*;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
@@ -53,14 +52,29 @@ public class SpringConfiguration {
     @Value("${app.hive.password}")
     private String hivePassword;
 
+    @Value("${app.db.createDB}")
+    private String createDB;
+
+    @Value("${app.db.datafile.client.location}")
+    private String datafileClientLocation;
+
+    @Value("${app.db.datafile.client.path}")
+    private String datafileClientPath;
+
+    private static final Log log = LogFactory.getLog(SpringConfiguration.class);
+
     @Bean
     public static PropertySourcesPlaceholderConfigurer propertySourcesPlaceholderConfigurer() {
         return new PropertySourcesPlaceholderConfigurer();
     }
 
-    @Bean
-    DataSource hiveDataSource() {
-        String connUrl = hiveUrl + ":" + hivePort + "/" + hiveSchema;
+    private DataSource hiveDataSource(boolean withSchema) {
+        String connUrl;
+        if(withSchema) {
+            connUrl = hiveUrl + ":" + hivePort + "/" + hiveSchema;
+        } else {
+            connUrl = hiveUrl + ":" + hivePort + "/";
+        }
         /*Add auth parameter if authentication mode is noSasl for HiveServer2*/
         if (hiveAuth.compareTo("noSasl") == 0) {
             connUrl = connUrl + ";auth=noSasl";
@@ -68,19 +82,58 @@ public class SpringConfiguration {
         return new SimpleDriverDataSource(new HiveDriver(), connUrl, hiveUser, hivePassword);
     }
 
+    private void createClientDB(JdbcTemplate jdbcTemplate) {
+        log.info("Creating databases ... ");
+
+        String connUrl = hiveUrl + ":" + hivePort + "/" + hiveSchema;
+        /*Add auth parameter if authentication mode is noSasl for HiveServer2*/
+        if (hiveAuth.compareTo("noSasl") == 0) {
+            connUrl = connUrl + ";auth=noSasl";
+        }
+
+        log.info("createClientDB : schema = " + hiveSchema +
+                " datafileClientLocation = " + datafileClientLocation +
+                " datafileClientPath = " + datafileClientPath);
+
+        String sqlCreateDB = "CREATE DATABASE IF NOT EXISTS " + hiveSchema;
+
+        String sqlCreateTable = "CREATE TABLE IF NOT EXISTS " + hiveSchema + ".client " +
+                "(id INT, " +
+                " firstname STRING, " +
+                " lastname STRING, " +
+                " address STRING)" +
+                " ROW FORMAT DELIMITED FIELDS TERMINATED BY '\\073'" +
+                " STORED AS TEXTFILE";
+
+        /*If no location specified, it's HDFS, otherwise specify LOCAL if the file is local*/
+        String location = "";
+        if (datafileClientLocation.compareTo("local") == 0) {
+            location = "LOCAL";
+        }
+
+        String sqlInsertData = "LOAD DATA " + location + " INPATH '" + datafileClientPath + "' OVERWRITE INTO TABLE " + hiveSchema + ".client";
+
+        log.debug("Executing : " + sqlCreateDB);
+        jdbcTemplate.execute(sqlCreateDB);
+        log.debug("Executing : " + sqlCreateTable);
+        jdbcTemplate.execute(sqlCreateTable);
+        log.debug("Executing : " + sqlInsertData);
+        jdbcTemplate.execute(sqlInsertData);
+    }
+
     @Bean
-    JdbcTemplate jdbcTemplate(@Qualifier("hiveDataSource") DataSource hiveDataSource) throws Exception {
-       return new JdbcTemplate(hiveDataSource);
+    JdbcTemplate jdbcTemplate() throws Exception {
+        if(createDB.compareTo("true") == 0) {
+            JdbcTemplate tmpTemplate = new JdbcTemplate(hiveDataSource(false));
+            createClientDB(tmpTemplate);
+            tmpTemplate.getDataSource().getConnection().close();
+        }
+       return new JdbcTemplate(hiveDataSource(true));
     }
 
     @Bean
     ClientDAO clientDAO() {
         return new ClientDAOImpl();
-    }
-
-    @Bean
-    DatabaseCreator databaseCreator() {
-        return new DatabaseCreator();
     }
 
     @PostConstruct
