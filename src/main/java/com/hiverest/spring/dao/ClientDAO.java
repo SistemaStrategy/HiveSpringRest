@@ -24,7 +24,7 @@ public interface ClientDAO {
      * @param numClient client number, unique
      * @return The client having the client number specified or NULL if not existing
      */
-    public Client getClient(int numClient);
+    public Client getClientById(int numClient);
 
     /**
      * Method to retrieve all clients

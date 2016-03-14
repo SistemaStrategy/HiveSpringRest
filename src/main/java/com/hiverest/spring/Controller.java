@@ -12,8 +12,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RequestParam;
-
-import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -29,25 +27,21 @@ public class Controller {
         return "Hello " + name;
     }
 
-    /*Change return type, make it generic*/
-    @RequestMapping("/getAll/{tableName}")
-    public List<String> getAll(@PathVariable String tableName) {
-
-        log.info("/tables");
-
-        List<String> result = new ArrayList<String>();
-
-        if (tableName.compareTo("client") == 0) {
-            List<Client> clients = clientDAO.listClients();
-            for(Client c : clients ) {
-                result.add(c.toString());
-            }
-        } else {
-            result.add("Table " + tableName + " not existing ... ");
-        }
-
-        log.info("/tables completed");
-        return result;
+    @RequestMapping("/client/all")
+    public List<Client> getAllClient() {
+        log.info("getAllClient");
+        List<Client> clients = clientDAO.listClients();
+        log.info("getAllClient completed");
+        return clients;
     }
+
+    @RequestMapping("/client/{id}")
+    public Client getClientById(@PathVariable("id") int id) {
+        log.info("getClientById");
+        Client client = clientDAO.getClientById(id);
+        log.info("getClientById completed");
+        return client;
+    }
+
 
 }

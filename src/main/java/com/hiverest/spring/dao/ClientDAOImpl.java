@@ -4,6 +4,7 @@ import com.hiverest.spring.data.Client;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 import java.util.List;
@@ -26,7 +27,7 @@ public class ClientDAOImpl implements ClientDAO {
         return;
     }
 
-    public Client getClient(int numClient) {
+    public Client getClientById(int numClient) {
         String SQL = "select * from client where id = ?";
         Client client = jdbcTemplateObject.queryForObject(SQL,
                 new Object[]{numClient}, new ClientMapper());

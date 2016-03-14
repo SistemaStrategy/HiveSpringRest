@@ -17,7 +17,10 @@ This web application must be compiled using maven and then deployed on tomcat.
   ```
 * Deploy the war generated on tomcat, using the manager-gui or a script. If you're using the manager-gui, edit the web.xml
 file for increasing the war upload limit size of 50 MB.
-* Test the application by accessing */getAll/client* resource.
+
+## Rest API 
+* /client/all : get all clients
+* /client/{id:int} : get client by id
 
 ## Configuration
 The HiveServer2 and Log4J settings can be configured by editing the *{catalina_home}/conf/HiveSpringRest.properties* 
@@ -26,8 +29,8 @@ You're free to modify this according your HiveServer2 configuration and need.
 * app.hive.url : HiveServer2 URL
 * app.hive.port : HiveServer2 port
 * app.hive.auth : Authentication mode, **noSasl** and **sasl** values supported
-* app.hive.user : Hive username, optional if noSasl authentication used
-* app.hive.password : Hive password, optional if noSasl authentication used
+* app.hive.user : Hive username
+* app.hive.password : Hive password
 * app.db.schema : Schema to be used or created
 * app.db.createDB : Boolean indicating if the database creation is enabled
 
