@@ -10,6 +10,7 @@ HiveSpringRest is a Spring web application exposing a REST interface for queryin
 ## Usage
 This web application must be compiled using maven and then deployed on tomcat.
 * Configure the *src/main/resources/HiveSpringRest.properties* file and copy it to *{catalina_home}/conf/* folder
+* Provide your *{catalina_home}* in the pom.xml file (**<argLine>-Dcatalina.home=/usr/share/tomcat9</argLine>**)
 * Compile the project
 
   ```

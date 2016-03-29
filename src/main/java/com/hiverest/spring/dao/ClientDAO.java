@@ -2,7 +2,6 @@ package com.hiverest.spring.dao;
 
 import com.hiverest.spring.data.Client;
 
-import javax.sql.DataSource;
 import java.util.List;
 
 /**
@@ -12,19 +11,19 @@ public interface ClientDAO {
 
     /**
      * Method to create a record in the client table
-     * @param numClient client number, unique
+     * @param ID client ID, unique
      * @param firstName first name
      * @param lastName last name
      * @param address address
      */
-    public void createClient(int numClient, String firstName, String lastName, String address);
+    public void insert(int ID, String firstName, String lastName, String address);
 
     /**
      * Methode to retrieve a client by client number
-     * @param numClient client number, unique
-     * @return The client having the client number specified or NULL if not existing
+     * @param ID client ID, unique
+     * @return The client having the client ID specified or NULL if not existing
      */
-    public Client getClientById(int numClient);
+    public Client findById(int ID);
 
     /**
      * Method to retrieve all clients

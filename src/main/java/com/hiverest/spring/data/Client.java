@@ -4,7 +4,7 @@ package com.hiverest.spring.data;
  * Created by yann blanc on 3/9/16.
  */
 public class Client {
-    private int numClient;
+    private int ID;
     private String lastName;
     private String firsName;
     private String address;
@@ -33,16 +33,16 @@ public class Client {
         this.lastName = lastName;
     }
 
-    public int getNumClient() {
-        return numClient;
+    public int getID() {
+        return ID;
     }
 
-    public void setNumClient(int numClient) {
-        this.numClient = numClient;
+    public void setID(int ID) {
+        this.ID = ID;
     }
 
     public String toString() {
-        return "Client number : " + numClient + ",First name : " + firsName + ",Last name : " + lastName + ",Address : " + address;
+        return "Client number : " + ID + ", First name : " + firsName + ", Last name : " + lastName + ", Address : " + address;
     }
 
 }

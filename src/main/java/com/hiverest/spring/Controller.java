@@ -38,7 +38,7 @@ public class Controller {
     @RequestMapping("/client/{id}")
     public Client getClientById(@PathVariable("id") int id) {
         log.info("getClientById");
-        Client client = clientDAO.getClientById(id);
+        Client client = clientDAO.findById(id);
         log.info("getClientById completed");
         return client;
     }

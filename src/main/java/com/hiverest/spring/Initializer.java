@@ -3,6 +3,7 @@ package com.hiverest.spring;
 /**
  * Created by yann blanc on 3/2/16.
  */
+import com.hiverest.spring.configuration.SpringConfiguration;
 import org.springframework.web.servlet.support.AbstractAnnotationConfigDispatcherServletInitializer;
 
 public class Initializer extends AbstractAnnotationConfigDispatcherServletInitializer {
